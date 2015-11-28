@@ -11,7 +11,6 @@ require_once 'includes/metas.php'
 <div class="register-box">
   <div class="register-box-body">
     <p class="login-box-msg">Register a new membership</p>
-
     <form action="index.php" method="post">
       <div class="form-group has-feedback">
         <input type="text" class="form-control" placeholder="Full name">
