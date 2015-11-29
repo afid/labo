@@ -7,28 +7,22 @@ if (isset($_SESSION["login"]) && $_SESSION["login"] != "") {
   redirect("index2.php");
 }
 
-$title = "Login";
+$title = "Forgot password";
 $mode = trim($_POST["mode"]);
-if ($mode == "login") {
-  $username = trim($_POST['username']);
-  $pass = trim(md5($_POST['user_password']));
+if ($mode == "get_password") {
+  $email = trim($_POST['email']);
 
-  if ($username == "" || $pass == "") {
-
+if (isset($email) && $email == "") {
     $_SESSION["errorType"] = "danger";
-    $_SESSION["errorMsg"] = "Veuillez renseigner tous les champs";
-    $_SESSION["id_employee"] = null;
-    $_SESSION["id_lang"] = null;
-    $_SESSION["login"] = null;
+    $_SESSION["errorMsg"] = '<i class="icon fa fa-ban"></i>Veuillez renseigner votre Email.';;
   } else {
-    $sql = "SELECT * FROM labo_employee WHERE login = :uname AND password = :upass ";
+    $sql = "SELECT * FROM labo_employee WHERE email = :email";
 
     try {
       $stmt = $DB->prepare($sql);
 
       // bind the values
-      $stmt->bindValue(":uname", $username);
-      $stmt->bindValue(":upass", $pass);
+      $stmt->bindValue(":email", $email);
 
       // execute Query
       $stmt->execute();
@@ -37,37 +31,24 @@ if ($mode == "login") {
       if (count($results) > 0) {
         if ($results[0]["active"] == 1) {
           $_SESSION["errorType"] = "success";
-          $_SESSION["errorMsg"] = "You have successfully logged in.";
-          $_SESSION["id_employee"] = $results[0]["id_employee"];
-          $_SESSION["id_lang"] = $results[0]["id_lang"];
-          $_SESSION["login"] = $results[0]["login"];
-          $_SESSION["lastname"] = $results[0]["lastname"];
-          $_SESSION["firstname"] = $results[0]["firstname"];
+          $_SESSION["errorMsg"] = '<i class="icon fa fa-check"></i>Veuillez verifier votre boite mail.';
 
-          redirect("index2.php");
+          redirect("forgotpwd.php");
           exit;
         } else {
           $_SESSION["errorType"] = "warning";
-          $_SESSION["errorMsg"] = "Votre compte n'est pas activÃ©.";
-          $_SESSION["id_employee"] = null;
-          $_SESSION["id_lang"] = null;
-          $_SESSION["login"] = null;
+          $_SESSION["errorMsg"] = '<i class="icon fa fa-info"></i>Votre compte n\'est pas activé.';
         }
-
-
       } else {
         $_SESSION["errorType"] = "warning";
-        $_SESSION["errorMsg"] = "Login ou Mot de passe incorrect.";
-        $_SESSION["id_employee"] = null;
-        $_SESSION["id_lang"] = null;
-        $_SESSION["login"] = null;
+        $_SESSION["errorMsg"] = '<i class="icon fa fa-ban"></i>Adresse email introuvable.';
       }
     } catch (Exception $ex) {
       $_SESSION["errorType"] = "danger";
       $_SESSION["errorMsg"] = $ex->getMessage();
     }
   }
-  redirect("index.php");
+  redirect($_SERVER['PHP_SELF']);
 } // end if login
 ?>
 <!DOCTYPE html>
@@ -94,31 +75,28 @@ if ($mode == "login") {
   <?php } ?>
   <!-- /.login-logo -->
   <div class="login-box-body">
-    <p class="login-box-msg">Connectez-vous pour commencer votre session</p>
+    <p class="login-box-msg">Perte de mot de passe</p>
 
-    <form action="index.php" method="post" name="contact_form" id="contact_form">
-      <input type="hidden" name="mode" value="login">
+    <form action="#" method="post" name="contact_form" id="contact_form">
+      <input type="hidden" name="mode" value="get_password">
 
       <div class="form-group has-feedback">
-        <input type="text" class="form-control" placeholder="Login" id="username" name="username">
-        <span class="glyphicon glyphicon-user form-control-feedback"></span>
+        <input type="email" class="form-control" placeholder="Email" id="email" name="email">
+        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
-        <input type="password" class="form-control" placeholder="Mot de passe" id="user_password"
-               name="user_password">
-        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+        <p class="text-aqua">Vous avez oubli&eacute le mot de passe? <br> Indiquez votre email puis cliquez sur "Demande de mot de passe".<br />
+          Vous recevrez un email qui vous expliquera les &eacute;tapes &agrave; suivre.</p>
       </div>
       <div class="row">
-        <div class="col-xs-8">
-          <div class="checkbox icheck">
-            <label>
-              <a href="forgotpwd.php">J'ai oubli&eacute; mon mot de passe</a>
-            </label>
-          </div>
+        <div class="col-xs-4">
+          <label>
+            <a href="index.php" class="btn btn-success btn-block btn-flat">Accueil</a>
+          </label>
         </div>
         <!-- /.col-xs-8 -->
-        <div class="col-xs-4">
-          <button type="submit" class="btn btn-primary btn-block btn-flat">Login</button>
+        <div class="col-xs-8">
+          <button type="submit" class="btn btn-primary btn-block btn-flat">Demande de mot de passe</button>
         </div>
         <!-- /.col-xs-4 -->
       </div>
