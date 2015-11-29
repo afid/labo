@@ -19,7 +19,8 @@ echo '
   <link rel="stylesheet" href="bootstrap/css/ionicons.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
-
+  <!-- Mon style -->
+  <link rel="stylesheet" href="dist/css/styles.css">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js does not work if you view the page via file:// -->
