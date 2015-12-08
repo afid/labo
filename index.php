@@ -94,7 +94,7 @@ if ($mode == "login") {
   <?php } ?>
   <!-- /.login-logo -->
   <div class="login-box-body">
-    <p class="login-box-msg">Connectez-vous pour commencer votre session</p>
+    <p class="login-box-msg">Commencer votre session</p>
 
     <form action="index.php" method="post" name="contact_form" id="contact_form">
       <input type="hidden" name="mode" value="login">

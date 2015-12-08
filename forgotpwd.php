@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once("includes/config.php");
-
+// si la session existe
 if (isset($_SESSION["login"]) && $_SESSION["login"] != "") {
   // if logged in send to dashboard page
   redirect("index2.php");
@@ -17,7 +17,6 @@ if (isset($email) && $email == "") {
     $_SESSION["errorMsg"] = '<i class="icon fa fa-ban"></i>Veuillez renseigner votre Email.';;
   } else {
     $sql = "SELECT * FROM labo_employee WHERE email = :email";
-
     try {
       $stmt = $DB->prepare($sql);
 
@@ -30,18 +29,59 @@ if (isset($email) && $email == "") {
 
       if (count($results) > 0) {
         if ($results[0]["active"] == 1) {
-          $_SESSION["errorType"] = "success";
-          $_SESSION["errorMsg"] = '<i class="icon fa fa-check"></i>Veuillez verifier votre boite mail.';
+          // envoie de mail
+          define('MAIL_SUJET','Votre identifiant');
+          $token = md5(uniqid(mt_rand()));
+          // Préparation Envoie du mail et update de la la table users
+          // Préparation de l'entête du mail:
+          $mail_entete  = 'From: "cmandgo.me"<'.ADMIN_MAIL.'>'."\r\n";
+          $mail_entete .= 'Reply-To: "cmandgo.me"<'.ADMIN_MAIL.'>'."\r\n";
+          $mail_entete .= 'Mime-Version: 1.0'."\r\n";
+          $mail_entete .= 'Content-type: text/html; charset=utf-8'."\r\n";
+          // Corp du mail
+          // préparation du corps du mail
+          $mail_corps  = "<b>Votre identification sur cmandgo.me</b><br />";
+          $mail_corps .= "Monsieur : ".$results[0]['firstname']." ".$results[0]['lastname']."<br />";
+          $mail_corps .="Pour finaliser le changement de votre mot de passe, nous vous invitons &agrave; cliquer sur le lien ci-dessous. Vous acc&eacute;derez directement &agrave; notre site afin de modifier votre mot de passe en toute simplicit&eacute; : <hr>";
+          $mail_corps .= "<a href=http://".$_SERVER['HTTP_HOST'].REPSITE."/passwordconfirm.php?email=$email&ConnID=$token>Modifier mon mot de passe</a><hr>";
+          $mail_corps .="En cas de dysfonctionnement, veuillez copier puis coller le lien <strong>http://".$_SERVER['HTTP_HOST']."/passwordconfirm.php?email=$email&ConnID=$token</strong> dans le champ \"adresse\" de votre navigateur Internet (Internet Explorer, Netscape, Mozilla...).<hr>";
+          $mail_corps .="Ce lien restera disponible 48h, &agrave; la suite de quoi vous devrez r&eacute;it&eacute;rer votre demande. <br />";
+          $mail_corps .="Si vous ne savez pas pourquoi vous avez re&ccedil;u cet e-mail, ignorez-le simplement ou bien contactez notre service Support.<br />";
+          $mail_corps .="Nous vous remercions d'avoir utilis&eacute; <a href='afid.noip.me/labo'>afid.noip.me/labo</a> et vous souhaitons une agr&eacute;able visite sur notre site.";
+          // fin corp du mail
+          if (mail($email,MAIL_SUJET,$mail_corps,$mail_entete)) {
+          // Mise a jour du token
+            //$sql = "UPDATE labo_employee SET token='token' WHERE email = $email";
+            $sql = "UPDATE labo_employee SET token = :token, token_expire = now()+ INTERVAL 2 DAY WHERE email = :email";
+            try {
+              $stmt = $DB->prepare($sql);
+              $stmt->bindValue(":token", $token);
+              $stmt->bindValue(":email", $email);
+              $stmt->execute();
+              if ($stmt->rowCount()) {
+                $_SESSION["errorType"] = "success";
+                $_SESSION["errorMsg"] = '<i class="icon fa fa-check"></i>Veuillez verifier votre boite mail.';
+              } else {
+                $_SESSION["errorType"] = "warning";
+                $_SESSION["errorMsg"] = '<i class="icon fa fa-check"></i>Une erreur est survenue.';
+              }
+            } catch (Exception $e){
+              $_SESSION["errorType"] = "warning";
+              $_SESSION["errorMsg"] = '<i class="icon fa fa-info"></i>Une erreur est survenue.';
 
+            }
+          // Fin Mise a jour du token
+          }
+          // fin envoi de mail
           redirect("forgotpwd.php");
           exit;
         } else {
           $_SESSION["errorType"] = "warning";
-          $_SESSION["errorMsg"] = '<i class="icon fa fa-info"></i>Votre compte n\'est pas activ�.';
+          $_SESSION["errorMsg"] = '<i class="icon fa fa-info"></i>Votre compte n\'est pas activ&eacute;.';
         }
       } else {
         $_SESSION["errorType"] = "warning";
-        $_SESSION["errorMsg"] = '<i class="icon fa fa-ban"></i>Adresse email introuvable.';
+        $_SESSION["errorMsg"] = '<i class="icon fa fa-ban"></i>OUPS... Votre email est inexistant';
       }
     } catch (Exception $ex) {
       $_SESSION["errorType"] = "danger";
@@ -85,8 +125,8 @@ if (isset($email) && $email == "") {
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
-        <p class="text-aqua">Vous avez oubli&eacute le mot de passe? <br> Indiquez votre email puis cliquez sur "Demande de mot de passe".<br />
-          Vous recevrez un email qui vous expliquera les &eacute;tapes &agrave; suivre.</p>
+        <p class="text-aqua text_left">Indiquez votre email puis cliquez sur "Demande de mot de passe".</p>
+        <p> Vous recevrez un email qui vous expliquera les &eacute;tapes &agrave; suivre.</p>
       </div>
       <div class="row">
         <div class="col-xs-4">
