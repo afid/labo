@@ -159,7 +159,6 @@ redirect("changepwd.php?email=" . $email . "&sec=".$token."");
     <span class="glyphicon glyphicon-lock form-control-feedback"></span>
    </div>
 
-
    <div class="form-group has-feedback">
     <input type="password" class="form-control" placeholder="Confirmer votre Mot de passe" id="pwd2" name="pwd2">
     <span class="glyphicon glyphicon-lock form-control-feedback"></span>
