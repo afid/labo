@@ -169,7 +169,7 @@ redirect("changepwd.php?email=" . $email . "&sec=".$token."");
     </div>
     <!-- /.col-xs-8 -->
     <div class="col-xs-4">
-     <button type="submit" class="btn btn-primary btn-block btn-flat">Login</button>
+     <button type="submit" class="btn btn-primary btn-block btn-flat">Valider</button>
     </div>
     <!-- /.col-xs-4 -->
    </div>
