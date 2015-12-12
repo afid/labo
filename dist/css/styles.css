@@ -13,3 +13,11 @@
 .text_left{
     text-align: left;
 }
+.fsPwdMessage {
+
+margin-top: 10px;
+    border: 1px solid #CCC;
+    background-color: #EFEFEF;
+    padding: 1em;
+    font-size: 0.8em;
+}
