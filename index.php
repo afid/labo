@@ -16,7 +16,7 @@ if ($mode == "login") {
   if ($username == "" || $pass == "") {
 
     $_SESSION["errorType"] = "danger";
-    $_SESSION["errorMsg"] = "Veuillez renseigner tous les champs";
+    $_SESSION["errorMsg"] = "<i class=\"icon fa fa-ban\"></i>Veuillez renseigner tous les champs";
     $_SESSION["id_employee"] = null;
     $_SESSION["id_lang"] = null;
     $_SESSION["login"] = null;
@@ -37,7 +37,7 @@ if ($mode == "login") {
       if (count($results) > 0) {
         if ($results[0]["active"] == 1) {
           $_SESSION["errorType"] = "success";
-          $_SESSION["errorMsg"] = "You have successfully logged in.";
+          $_SESSION["errorMsg"] = "<i class=\"icon fa fa-check\"></i>Connexion avec succès.";
           $_SESSION["id_employee"] = $results[0]["id_employee"];
           $_SESSION["id_lang"] = $results[0]["id_lang"];
           $_SESSION["login"] = $results[0]["login"];
@@ -48,7 +48,7 @@ if ($mode == "login") {
           exit;
         } else {
           $_SESSION["errorType"] = "warning";
-          $_SESSION["errorMsg"] = "Votre compte n'est pas activé.";
+          $_SESSION["errorMsg"] = "<i class=\"icon fa fa-check\"></i>Votre compte n'est pas activé.";
           $_SESSION["id_employee"] = null;
           $_SESSION["id_lang"] = null;
           $_SESSION["login"] = null;
@@ -57,7 +57,7 @@ if ($mode == "login") {
 
       } else {
         $_SESSION["errorType"] = "warning";
-        $_SESSION["errorMsg"] = "Login ou Mot de passe incorrect.";
+        $_SESSION["errorMsg"] = "<i class=\"icon fa fa-ban\"></i>Login ou Mot de passe incorrect.";
         $_SESSION["id_employee"] = null;
         $_SESSION["id_lang"] = null;
         $_SESSION["login"] = null;

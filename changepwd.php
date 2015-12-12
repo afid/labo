@@ -20,14 +20,14 @@ if ($mode == "change_password") {
  // Si mot de passe non renseigné
  if ($pwd1 == "" || $pwd2 == "") {
   $_SESSION["errorType"] = "danger";
-  $_SESSION["errorMsg"] = "Veuillez renseigner tous les champs";
+  $_SESSION["errorMsg"] = "<i class=\"icon fa fa-ban\"></i>Veuillez renseigner tous les champs";
   $_SESSION["login"] = null;
  }
  // Fin Si mot de passe non renseigné
  // Si mot de passe different
  elseif ($pwd1 != $pwd2 ) {
   $_SESSION["errorType"] = "danger";
-  $_SESSION["errorMsg"] = "Les deux mots de passe ne sont pas identiques";
+  $_SESSION["errorMsg"] = "<i class=\"icon fa fa-ban\"></i>Les deux mots de passe ne sont pas identiques";
  }
  // Fin Si mot de passe different
  // Si Formulaire corectement renseigné
@@ -60,7 +60,7 @@ if ($mode == "change_password") {
          $_SESSION["errorMsg"] = '<i class="icon fa fa-check"></i>Votre mot a été modifié avec succès.';
         } else {
          $_SESSION["errorType"] = "warning";
-         $_SESSION["errorMsg"] = '<i class="icon fa fa-check"></i>Une erreur est survenue.';
+         $_SESSION["errorMsg"] = '<i class="icon fa fa-info"></i>Une erreur est survenue.';
         }
        } catch (Exception $e){
        $_SESSION["errorType"] = "warning";
@@ -74,7 +74,7 @@ if ($mode == "change_password") {
       // Si date token invalide
       else{
        $_SESSION["errorType"] = "warning";
-       $_SESSION["errorMsg"] = "<i class=\"icon fa fa-arrow-circle-o-down\"></i>Votre demande n'est plus valide";
+       $_SESSION["errorMsg"] = "<i class=\"icon fa fa-ban\"></i>Votre demande n'est plus valide";
        redirect("forgotpwd.php");
       }
       // Fin Si date token invalide
@@ -82,7 +82,7 @@ if ($mode == "change_password") {
      // Si compte suspendu
      } else {
       $_SESSION["errorType"] = "warning";
-      $_SESSION["errorMsg"] = "<i class=\"icon fa fa-info\"></i>Votre compte est suspendu.";
+      $_SESSION["errorMsg"] = "<i class=\"icon fa fa-ban\"></i>Votre compte est suspendu.";
       redirect("index.php");
      }
      // Fin Si compte suspendu
@@ -91,7 +91,7 @@ if ($mode == "change_password") {
     // Si tentative de Hack
     else {
      $_SESSION["errorType"] = "warning";
-     $_SESSION["errorMsg"] = "<i class=\"icon fa fa-arrow-circle-o-down\"></i>Votre demande ne peut aboutir";
+     $_SESSION["errorMsg"] = "<i class=\"icon fa fa-ban\"></i>Votre demande ne peut aboutir";
      redirect("forgotpwd.php");
     }
     // Fin Si tentative de Hack
