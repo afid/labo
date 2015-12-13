@@ -1,12 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: afidb
- * Date: 28/11/2015
- * Time: 13:58
- * @author afid benayad
- * @website http://afid.noip.me
- */
 
 // display all error except deprecated and notice
 error_reporting( E_ALL & ~E_DEPRECATED & ~E_NOTICE );
@@ -15,6 +7,21 @@ session_start();
 // turn on output buffering
 ob_start();
 
+/**
+ * Définition des repertoires du site
+ */
+define('REPSITE'  , '/labo');
+define('CSS'      , 'dist/css');
+define('IMAGES'   , 'dist/img');
+define('JS'       , 'dist/js');
+define('LANG'     , 'lang');
+define('LOGS'     , 'logs');
+define('DEBUGS'   , 'debugs');
+define('CLASS'    , 'class');
+
+/**
+ * Définition des des acces DB
+ */
 define('DB_DRIVER', 'mysql');
 define('DB_SERVER', 'localhost');
 define('DB_SERVER_USERNAME', 'root');
@@ -22,6 +29,10 @@ define('DB_SERVER_PASSWORD', '');
 define('DB_DATABASE', 'labo');
 
 define('PROJECT_NAME', 'labo');
+
+require_once('class/class.logs.php');
+// On créé un objet Logger (instanciation)
+$logger = new Logger('./logs');
 
 // basic options for PDO
 $dboptions = array(
@@ -47,4 +58,7 @@ if ($_SESSION["errorType"] != "" && $_SESSION["errorMsg"] != "" ) {
     $_SESSION["errorType"] = "";
     $_SESSION["errorMsg"] = "";
 }
+
+
+
 ?>

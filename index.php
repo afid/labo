@@ -36,22 +36,40 @@ if ($mode == "login") {
 
       if (count($results) > 0) {
         if ($results[0]["active"] == 1) {
-          $_SESSION["errorType"] = "success";
-          $_SESSION["errorMsg"] = "<i class=\"icon fa fa-check\"></i>Connexion avec succès.";
-          $_SESSION["id_employee"] = $results[0]["id_employee"];
-          $_SESSION["id_lang"] = $results[0]["id_lang"];
-          $_SESSION["login"] = $results[0]["login"];
-          $_SESSION["lastname"] = $results[0]["lastname"];
-          $_SESSION["firstname"] = $results[0]["firstname"];
-
-          redirect("index2.php");
-          exit;
+          $sql = "UPDATE labo_employee SET last_connection_date =now() WHERE login = :uname AND password = :upass";
+          try {
+            $stmt = $DB->prepare($sql);
+            $stmt->bindValue(":uname", $username);
+            $stmt->bindValue(":upass", $pass);
+            $stmt->execute();
+            if ($stmt->rowCount()) {
+              $_SESSION["errorType"] = "success";
+              $_SESSION["errorMsg"] = "<i class=\"icon fa fa-check\"></i>Connexion avec succès.";
+              $_SESSION["id_employee"] = $results[0]["id_employee"];
+              $_SESSION["id_lang"] = $results[0]["id_lang"];
+              $_SESSION["login"] = $results[0]["login"];
+              $_SESSION["lastname"] = $results[0]["lastname"];
+              $_SESSION["firstname"] = $results[0]["firstname"];
+              $logger->log('succes', 'succes_login', "Connexion avec succès pour le login: $username", Logger::GRAN_MONTH);
+              redirect("index2.php");
+              exit;
+            } else {
+              $_SESSION["errorType"] = "warning";
+              $_SESSION["errorMsg"] = '<i class="icon fa fa-info"></i>Une erreur est survenue.';
+              $logger->log('erreurs', 'err_login', "Une erreur est survenue pour le login: $username , mot de passe: $pass", Logger::GRAN_MONTH);
+            }
+          } catch (Exception $e){
+            $_SESSION["errorType"] = "warning";
+            $_SESSION["errorMsg"] = '<i class="icon fa fa-info"></i>Une erreur est survenue.';
+            $logger->log('erreurs', 'err_login', "Une erreur est survenue pour le login: $username , mot de passe: $pass", Logger::GRAN_MONTH);
+          }
         } else {
           $_SESSION["errorType"] = "warning";
           $_SESSION["errorMsg"] = "<i class=\"icon fa fa-check\"></i>Votre compte n'est pas activé.";
           $_SESSION["id_employee"] = null;
           $_SESSION["id_lang"] = null;
           $_SESSION["login"] = null;
+          $logger->log('erreurs', 'err_login', "Accès suspendu pour le login: $username , mot de passe: $pass", Logger::GRAN_MONTH);
         }
 
 
@@ -61,10 +79,12 @@ if ($mode == "login") {
         $_SESSION["id_employee"] = null;
         $_SESSION["id_lang"] = null;
         $_SESSION["login"] = null;
+        $logger->log('erreurs', 'err_login', "Login ou Mot de passe incorrect pourle login: $username , mot de passe: $pass", Logger::GRAN_MONTH);
       }
     } catch (Exception $ex) {
       $_SESSION["errorType"] = "danger";
       $_SESSION["errorMsg"] = $ex->getMessage();
+      $logger->log('erreurs', 'err_login', $ex->getMessage(), Logger::GRAN_MONTH);
     }
   }
   redirect("index.php");
@@ -94,7 +114,7 @@ if ($mode == "login") {
   <?php } ?>
   <!-- /.login-logo -->
   <div class="login-box-body">
-    <p class="login-box-msg">Commencer votre session</p>
+    <h3 class="text_center">Commencer votre session</h3>
 
     <form action="index.php" method="post" name="contact_form" id="contact_form">
       <input type="hidden" name="mode" value="login">
